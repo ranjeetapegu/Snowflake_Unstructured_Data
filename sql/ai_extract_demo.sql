@@ -20,7 +20,7 @@ CREATE STAGE IF NOT EXISTS AI_EXTRACT_DEMO
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 
 -- 2. Upload the PDF (run from Cortex Code, SnowSQL or Snow CLI)
-PUT 'file:///Users/rpegu/Documents/SE Customer Work/Vayner/document_parsing/sample_docs/AI_EXTRACT_Demo_Table_Form_Contract.pdf'
+PUT 'file:///Users/rpegu/Documents/document_parsing/sample_docs/AI_EXTRACT_Demo_Table_Form_Contract.pdf'
     @AI_EXTRACT_DEMO AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
 
 -- 3. Register in directory table
