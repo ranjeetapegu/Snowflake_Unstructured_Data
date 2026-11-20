@@ -12,28 +12,34 @@ USE ROLE ACCOUNTADMIN;
 USE WAREHOUSE DEMO_WH;
 USE SCHEMA DEMO_DB.UNSTRUCTURE_DATA;
 
--- Already uploaded. To re-upload:
--- PUT 'file:///Users/rpegu/Documents/SE Customer Work/Vayner/document_parsing/sample_docs/AI_PARSE_Demo_Quarterly_Report.pdf'
---     @AI_PARSE_DEMO AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
--- ALTER STAGE AI_PARSE_DEMO REFRESH;
+
 
 SELECT relative_path, size FROM DIRECTORY(@AI_PARSE_DEMO);
 
 
 -- 1. OCR mode (default): plain text, fastest and cheapest. No structure.
-SELECT AI_PARSE_DOCUMENT(
+create or replace table stg_quaterly_Report
+as 
+SELECT 'AI_PARSE_Demo_Quarterly_Report.pdf' file_name, AI_PARSE_DOCUMENT(
   TO_FILE('@AI_PARSE_DEMO', 'AI_PARSE_Demo_Quarterly_Report.pdf'),
   {'mode': 'OCR'}
 ):content::STRING AS ocr_text;
 
 
+select * from stg_quaterly_Report
+
+
 -- 2. LAYOUT mode: Markdown with headings, bullets and tables preserved.
-SELECT AI_PARSE_DOCUMENT(
+create or replace table stg_quaterly_Report_layout
+as
+SELECT 'AI_PARSE_Demo_Quarterly_Report.pdf' AS file_name, AI_PARSE_DOCUMENT(
   TO_FILE('@AI_PARSE_DEMO', 'AI_PARSE_Demo_Quarterly_Report.pdf'),
   {'mode': 'LAYOUT'}
 ):content::STRING AS layout_markdown;
+
 -- Compare with query 1: look at how the page 2 regional table comes back.
 
+select * from stg_quaterly_Report_layout;
 
 -- 3. One row per page (page_split). Result has a pages array.
 SELECT
